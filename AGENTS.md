@@ -24,36 +24,37 @@
 - 새 패키지(의존성) 추가는 최소화한다.
 - 코드 생성/추가 시 파일 경로를 명확히 표기하고, 필요한 파일은 “완전한 내용”으로 제공한다.
 
+## 3-1) 의존성 버전 정책 (최신/안전)
+- 새 패키지 추가 시 **pub.dev 기준 최신 Stable(정식 릴리스)** 중에서, 현재 프로젝트의 Flutter/Dart SDK 제약과 **호환되는 가장 높은 버전**을 사용한다.
+- 기본은 `^<latest>` 형태의 caret 범위를 사용한다. (재현성/호환성 이슈로 고정이 필요한 경우에만 예외적으로 pin)
+- Major 버전 업그레이드도 Stable이고 호환성(Flutter/Dart SDK 제약) 문제가 없으며, `flutter analyze`/빌드가 통과하면 적용한다. 적용 시 변경점(changelog/release note)을 간단히 요약한다.
+- `-alpha`, `-beta`, `-rc` 등 **프리릴리즈 버전은 사용하지 않는다.**
+- 새 의존성 추가/업그레이드 작업에서는 아래를 함께 수행하고 결과를 남긴다.
+  - `flutter pub get`
+  - `flutter pub outdated` (가능하면)
+  - `flutter analyze`
+- 의존성 버전이 최신 Stable보다 낮게 들어가면(예: flex_color_scheme 7.x 등) 사유를 명확히 적고, 가능하면 최신 Stable로 올린다.
+
 ## 4) 코드 스타일 및 품질 규칙
 - Dart null-safety를 준수한다.
 - 가능한 `const`, `final`을 사용한다.
 - 중복 로직은 즉시 공통화하지 않는다(요구가 생긴 범위에서만 정리).
 - 린트/포맷을 통과하도록 만든다.
 
-## 5) 필수 검증 커맨드 (변경 후 항상 수행)
-- 의존성 동기화
-    - `flutter pub get`
-- 포맷
-    - `dart format .`
-- 정적 분석
-    - `flutter analyze`
-- 테스트
-    - `flutter test`
-
-## 6) Android 빌드/설정 가드레일
+## 5) Android 빌드/설정 가드레일
 - `android/` 하위 설정은 다음 전제를 유지한다:
     - compile/target: API 36 (Android 16.0)
     - JDK: 21
 - Gradle/AGP/Kotlin 버전은 임의로 올리지 않는다.
 - 빌드 오류 해결을 명분으로 한 무작정 버전 업을 금지한다.
 
-## 7) 작업 산출물 포맷 (Codex CLI 출력 기준)
+## 6) 작업 산출물 포맷 (Codex CLI 출력 기준)
 - 변경 요약: 무엇을 바꿨는지 3~7줄로 요약한다.
 - 변경 파일 목록: 경로 기준으로 나열한다.
 - 실행 결과: 수행한 커맨드와 핵심 결과(성공/실패, 에러 메시지 요약)를 기록한다.
 - 코드 제공: 필요한 파일은 경로 + 전체 내용을 포함한다.
 
-## 8) 커밋 메시지 규칙 (Conventional Commits)
+## 7) 커밋 메시지 규칙 (Conventional Commits)
 - 형식: `type(scope): summary`
 - type: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`
 - 예시
@@ -61,7 +62,7 @@
     - `fix(storage): prevent duplicate save`
     - `chore(android): align sdk settings for api36`
 
-## 9) 금지 사항
+## 8) 금지 사항
 - Android 이외 플랫폼 지원 추가(iOS/Web/Desktop).
 - 요구 없는 전역 리팩터링/대규모 구조 변경.
 - “돌아가게만” 만드는 임시 코드(주석 처리로 기능 무력화, 무의미한 try-catch 남발).
