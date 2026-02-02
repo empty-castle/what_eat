@@ -41,10 +41,26 @@
 - 중복 로직은 즉시 공통화하지 않는다(요구가 생긴 범위에서만 정리).
 - 린트/포맷을 통과하도록 만든다.
 
+## 4-1) 한글/문자 인코딩(UTF-8) 가드레일
+- 프로젝트 내 모든 텍스트 파일은 **UTF-8 인코딩**으로 저장한다. (특히 `lib/**/*.dart`, `pubspec.yaml`, `AGENTS.md` 등)
+- 한글 문자열/주석을 코드에 추가한 직후, 파일 내용을 다시 확인하여 **문자 깨짐(모지바케)** 이 없는지 검증한다.
+- 아래처럼 한글이 깨진 문자열이 생성되면(예: `enabledLabels.add('以묒떇');`) 그대로 두지 말고 즉시 수정한다.
+- 한글 문자열이 반복해서 깨지는 경우, 해당 문자열 리터럴은 **Unicode escape**로 치환해 안정적으로 유지한다.
+  - 예: `'중식'` → `'\uC911\uC2DD'`
+  - 예: `'한식'` → `'\uD55C\uC2DD'`
+  - 예: `'양식'` → `'\uC591\uC2DD'`
+  - 예: `'일식'` → `'\uC77C\uC2DD'`
+  - 예: `'분식'` → `'\uBD84\uC2DD'`
+- UI 라벨 문자열은 가능한 한 **한 곳에 const로 모아** 참조한다(화면 코드에 한글 리터럴 직접 하드코딩 금지).
+  - 예: `lib/constants/category_labels.dart`에 `const Map/...` 또는 `enum + label getter` 형태로 정의하고, 화면에서는 그 상수만 사용한다.
+- Windows 터미널 환경에서는 Codex CLI 작업 시작 전에 콘솔 인코딩을 UTF-8로 맞춘다.
+  - CMD: `chcp 65001`
+  - PowerShell: `[Console]::OutputEncoding = [Text.UTF8Encoding]::new()`
+
 ## 5) Android 빌드/설정 가드레일
 - `android/` 하위 설정은 다음 전제를 유지한다:
-    - compile/target: API 36 (Android 16.0)
-    - JDK: 21
+  - compile/target: API 36 (Android 16.0)
+  - JDK: 21
 - Gradle/AGP/Kotlin 버전은 임의로 올리지 않는다.
 - 빌드 오류 해결을 명분으로 한 무작정 버전 업을 금지한다.
 
@@ -58,9 +74,9 @@
 - 형식: `type(scope): summary`
 - type: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`
 - 예시
-    - `feat(menu): add random pick action`
-    - `fix(storage): prevent duplicate save`
-    - `chore(android): align sdk settings for api36`
+  - `feat(menu): add random pick action`
+  - `fix(storage): prevent duplicate save`
+  - `chore(android): align sdk settings for api36`
 
 ## 8) 금지 사항
 - Android 이외 플랫폼 지원 추가(iOS/Web/Desktop).

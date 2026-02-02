@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:what_eat/screens/nearby_restaurants_screen.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -19,6 +21,72 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isWesternPressed = false;
   bool isJapanesePressed = false;
   bool isSnackPressed = false;
+
+  void _resetAllCategories() {
+    isKoreanEnabled = true;
+    isChineseEnabled = true;
+    isWesternEnabled = true;
+    isJapaneseEnabled = true;
+    isSnackEnabled = true;
+
+    isKoreanPressed = false;
+    isChinesePressed = false;
+    isWesternPressed = false;
+    isJapanesePressed = false;
+    isSnackPressed = false;
+  }
+
+  String? _getSingleEnabledCategoryLabel() {
+    final List<String> enabledLabels = [];
+    if (isKoreanEnabled) {
+      enabledLabels.add('한식');
+    }
+    if (isChineseEnabled) {
+      enabledLabels.add('중식');
+    }
+    if (isWesternEnabled) {
+      enabledLabels.add('양식');
+    }
+    if (isJapaneseEnabled) {
+      enabledLabels.add('일식');
+    }
+    if (isSnackEnabled) {
+      enabledLabels.add('분식');
+    }
+
+    if (enabledLabels.length == 1) {
+      return enabledLabels.first;
+    }
+
+    return null;
+  }
+
+  void _navigateIfSingleEnabled() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      final String? label = _getSingleEnabledCategoryLabel();
+      if (label == null) {
+        return;
+      }
+
+      Navigator.of(context)
+          .push(
+            MaterialPageRoute(
+              builder: (_) => NearbyRestaurantsScreen(categoryLabel: label),
+            ),
+          )
+          .then((_) {
+            if (!mounted) {
+              return;
+            }
+            setState(() {
+              _resetAllCategories();
+            });
+          });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -110,9 +178,12 @@ class _HomeScreenState extends State<HomeScreen> {
               enabled: isKoreanEnabled,
               pressed: isKoreanPressed,
               showDivider: true,
-              onTap: () => setState(() {
-                isKoreanEnabled = !isKoreanEnabled;
-              }),
+              onTap: () {
+                setState(() {
+                  isKoreanEnabled = !isKoreanEnabled;
+                });
+                _navigateIfSingleEnabled();
+              },
               onTapDown: (_) => setState(() {
                 isKoreanPressed = true;
               }),
@@ -132,9 +203,12 @@ class _HomeScreenState extends State<HomeScreen> {
               enabled: isChineseEnabled,
               pressed: isChinesePressed,
               showDivider: true,
-              onTap: () => setState(() {
-                isChineseEnabled = !isChineseEnabled;
-              }),
+              onTap: () {
+                setState(() {
+                  isChineseEnabled = !isChineseEnabled;
+                });
+                _navigateIfSingleEnabled();
+              },
               onTapDown: (_) => setState(() {
                 isChinesePressed = true;
               }),
@@ -154,9 +228,12 @@ class _HomeScreenState extends State<HomeScreen> {
               enabled: isWesternEnabled,
               pressed: isWesternPressed,
               showDivider: true,
-              onTap: () => setState(() {
-                isWesternEnabled = !isWesternEnabled;
-              }),
+              onTap: () {
+                setState(() {
+                  isWesternEnabled = !isWesternEnabled;
+                });
+                _navigateIfSingleEnabled();
+              },
               onTapDown: (_) => setState(() {
                 isWesternPressed = true;
               }),
@@ -176,9 +253,12 @@ class _HomeScreenState extends State<HomeScreen> {
               enabled: isJapaneseEnabled,
               pressed: isJapanesePressed,
               showDivider: true,
-              onTap: () => setState(() {
-                isJapaneseEnabled = !isJapaneseEnabled;
-              }),
+              onTap: () {
+                setState(() {
+                  isJapaneseEnabled = !isJapaneseEnabled;
+                });
+                _navigateIfSingleEnabled();
+              },
               onTapDown: (_) => setState(() {
                 isJapanesePressed = true;
               }),
@@ -198,9 +278,12 @@ class _HomeScreenState extends State<HomeScreen> {
               enabled: isSnackEnabled,
               pressed: isSnackPressed,
               showDivider: false,
-              onTap: () => setState(() {
-                isSnackEnabled = !isSnackEnabled;
-              }),
+              onTap: () {
+                setState(() {
+                  isSnackEnabled = !isSnackEnabled;
+                });
+                _navigateIfSingleEnabled();
+              },
               onTapDown: (_) => setState(() {
                 isSnackPressed = true;
               }),
