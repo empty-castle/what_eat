@@ -1,5 +1,7 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
+import 'package:what_eat/constants/food_categories.dart';
+import 'package:what_eat/models/category_spec.dart';
 import 'package:what_eat/screens/nearby_restaurants_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -22,6 +24,49 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isJapanesePressed = false;
   bool isSnackPressed = false;
 
+  List<CategorySpec> get _categories => [
+        CategorySpec(
+          label: FoodCategory.korean.label,
+          imageAsset: FoodCategory.korean.imageAsset,
+          isEnabled: () => isKoreanEnabled,
+          isPressed: () => isKoreanPressed,
+          setEnabled: (value) => isKoreanEnabled = value,
+          setPressed: (value) => isKoreanPressed = value,
+        ),
+        CategorySpec(
+          label: FoodCategory.western.label,
+          imageAsset: FoodCategory.western.imageAsset,
+          isEnabled: () => isWesternEnabled,
+          isPressed: () => isWesternPressed,
+          setEnabled: (value) => isWesternEnabled = value,
+          setPressed: (value) => isWesternPressed = value,
+        ),
+        CategorySpec(
+          label: FoodCategory.chinese.label,
+          imageAsset: FoodCategory.chinese.imageAsset,
+          isEnabled: () => isChineseEnabled,
+          isPressed: () => isChinesePressed,
+          setEnabled: (value) => isChineseEnabled = value,
+          setPressed: (value) => isChinesePressed = value,
+        ),
+        CategorySpec(
+          label: FoodCategory.japanese.label,
+          imageAsset: FoodCategory.japanese.imageAsset,
+          isEnabled: () => isJapaneseEnabled,
+          isPressed: () => isJapanesePressed,
+          setEnabled: (value) => isJapaneseEnabled = value,
+          setPressed: (value) => isJapanesePressed = value,
+        ),
+        CategorySpec(
+          label: FoodCategory.snack.label,
+          imageAsset: FoodCategory.snack.imageAsset,
+          isEnabled: () => isSnackEnabled,
+          isPressed: () => isSnackPressed,
+          setEnabled: (value) => isSnackEnabled = value,
+          setPressed: (value) => isSnackPressed = value,
+        ),
+      ];
+
   void _resetAllCategories() {
     isKoreanEnabled = true;
     isChineseEnabled = true;
@@ -37,28 +82,29 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   String? _getSingleEnabledCategoryLabel() {
-    final List<String> enabledLabels = [];
-    if (isKoreanEnabled) {
-      enabledLabels.add('한식');
-    }
-    if (isChineseEnabled) {
-      enabledLabels.add('중식');
-    }
-    if (isWesternEnabled) {
-      enabledLabels.add('양식');
-    }
-    if (isJapaneseEnabled) {
-      enabledLabels.add('일식');
-    }
-    if (isSnackEnabled) {
-      enabledLabels.add('분식');
-    }
+    final enabledLabels = _categories
+        .where((category) => category.isEnabled())
+        .map((category) => category.label)
+        .toList();
 
     if (enabledLabels.length == 1) {
       return enabledLabels.first;
     }
 
     return null;
+  }
+
+  void _toggleCategory(CategorySpec category) {
+    setState(() {
+      category.setEnabled(!category.isEnabled());
+    });
+    _navigateIfSingleEnabled();
+  }
+
+  void _setCategoryPressed(CategorySpec category, bool value) {
+    setState(() {
+      category.setPressed(value);
+    });
   }
 
   void _navigateIfSingleEnabled() {
@@ -169,134 +215,42 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('뭐먹지')),
       body: Column(
-        children: [
-          Expanded(
-            child: buildCategory(
-              label: '한식',
-              imageAsset: 'assets/images/korean.png',
-              foreground: Colors.white,
-              enabled: isKoreanEnabled,
-              pressed: isKoreanPressed,
-              showDivider: true,
-              onTap: () {
-                setState(() {
-                  isKoreanEnabled = !isKoreanEnabled;
-                });
-                _navigateIfSingleEnabled();
-              },
-              onTapDown: (_) => setState(() {
-                isKoreanPressed = true;
-              }),
-              onTapUp: (_) => setState(() {
-                isKoreanPressed = false;
-              }),
-              onTapCancel: () => setState(() {
-                isKoreanPressed = false;
-              }),
-            ),
-          ),
-          Expanded(
-            child: buildCategory(
-              label: '중식',
-              imageAsset: 'assets/images/chinese.png',
-              foreground: Colors.white,
-              enabled: isChineseEnabled,
-              pressed: isChinesePressed,
-              showDivider: true,
-              onTap: () {
-                setState(() {
-                  isChineseEnabled = !isChineseEnabled;
-                });
-                _navigateIfSingleEnabled();
-              },
-              onTapDown: (_) => setState(() {
-                isChinesePressed = true;
-              }),
-              onTapUp: (_) => setState(() {
-                isChinesePressed = false;
-              }),
-              onTapCancel: () => setState(() {
-                isChinesePressed = false;
-              }),
-            ),
-          ),
-          Expanded(
-            child: buildCategory(
-              label: '양식',
-              imageAsset: 'assets/images/western.png',
-              foreground: Colors.white,
-              enabled: isWesternEnabled,
-              pressed: isWesternPressed,
-              showDivider: true,
-              onTap: () {
-                setState(() {
-                  isWesternEnabled = !isWesternEnabled;
-                });
-                _navigateIfSingleEnabled();
-              },
-              onTapDown: (_) => setState(() {
-                isWesternPressed = true;
-              }),
-              onTapUp: (_) => setState(() {
-                isWesternPressed = false;
-              }),
-              onTapCancel: () => setState(() {
-                isWesternPressed = false;
-              }),
-            ),
-          ),
-          Expanded(
-            child: buildCategory(
-              label: '일식',
-              imageAsset: 'assets/images/japanese.png',
-              foreground: Colors.white,
-              enabled: isJapaneseEnabled,
-              pressed: isJapanesePressed,
-              showDivider: true,
-              onTap: () {
-                setState(() {
-                  isJapaneseEnabled = !isJapaneseEnabled;
-                });
-                _navigateIfSingleEnabled();
-              },
-              onTapDown: (_) => setState(() {
-                isJapanesePressed = true;
-              }),
-              onTapUp: (_) => setState(() {
-                isJapanesePressed = false;
-              }),
-              onTapCancel: () => setState(() {
-                isJapanesePressed = false;
-              }),
-            ),
-          ),
-          Expanded(
-            child: buildCategory(
-              label: '분식',
-              imageAsset: 'assets/images/snack.png',
-              foreground: Colors.white,
-              enabled: isSnackEnabled,
-              pressed: isSnackPressed,
-              showDivider: false,
-              onTap: () {
-                setState(() {
-                  isSnackEnabled = !isSnackEnabled;
-                });
-                _navigateIfSingleEnabled();
-              },
-              onTapDown: (_) => setState(() {
-                isSnackPressed = true;
-              }),
-              onTapUp: (_) => setState(() {
-                isSnackPressed = false;
-              }),
-              onTapCancel: () => setState(() {
-                isSnackPressed = false;
-              }),
-            ),
-          ),
-        ],
+        children: _buildCategoryItems(buildCategory),
       ),
     );
+  }
+
+  List<Widget> _buildCategoryItems(
+    Widget Function({
+      required String label,
+      required String imageAsset,
+      required Color foreground,
+      required bool enabled,
+      required bool pressed,
+      required bool showDivider,
+      required VoidCallback onTap,
+      required VoidCallback onTapCancel,
+      required void Function(TapDownDetails details) onTapDown,
+      required void Function(TapUpDetails details) onTapUp,
+    }) buildCategory,
+  ) {
+    return List<Widget>.generate(_categories.length, (index) {
+      final category = _categories[index];
+      final bool showDivider = index < _categories.length - 1;
+      return Expanded(
+        child: buildCategory(
+          label: category.label,
+          imageAsset: category.imageAsset,
+          foreground: Colors.white,
+          enabled: category.isEnabled(),
+          pressed: category.isPressed(),
+          showDivider: showDivider,
+          onTap: () => _toggleCategory(category),
+          onTapDown: (_) => _setCategoryPressed(category, true),
+          onTapUp: (_) => _setCategoryPressed(category, false),
+          onTapCancel: () => _setCategoryPressed(category, false),
+        ),
+      );
+    });
   }
 }

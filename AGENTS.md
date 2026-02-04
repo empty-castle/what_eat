@@ -31,8 +31,6 @@
 - `-alpha`, `-beta`, `-rc` 등 **프리릴리즈 버전은 사용하지 않는다.**
 - 새 의존성 추가/업그레이드 작업에서는 아래를 함께 수행하고 결과를 남긴다.
   - `flutter pub get`
-  - `flutter pub outdated` (가능하면)
-  - `flutter analyze`
 - 의존성 버전이 최신 Stable보다 낮게 들어가면(예: flex_color_scheme 7.x 등) 사유를 명확히 적고, 가능하면 최신 Stable로 올린다.
 
 ## 4) 코드 스타일 및 품질 규칙
@@ -45,12 +43,6 @@
 - 프로젝트 내 모든 텍스트 파일은 **UTF-8 인코딩**으로 저장한다. (특히 `lib/**/*.dart`, `pubspec.yaml`, `AGENTS.md` 등)
 - 한글 문자열/주석을 코드에 추가한 직후, 파일 내용을 다시 확인하여 **문자 깨짐(모지바케)** 이 없는지 검증한다.
 - 아래처럼 한글이 깨진 문자열이 생성되면(예: `enabledLabels.add('以묒떇');`) 그대로 두지 말고 즉시 수정한다.
-- 한글 문자열이 반복해서 깨지는 경우, 해당 문자열 리터럴은 **Unicode escape**로 치환해 안정적으로 유지한다.
-  - 예: `'중식'` → `'\uC911\uC2DD'`
-  - 예: `'한식'` → `'\uD55C\uC2DD'`
-  - 예: `'양식'` → `'\uC591\uC2DD'`
-  - 예: `'일식'` → `'\uC77C\uC2DD'`
-  - 예: `'분식'` → `'\uBD84\uC2DD'`
 - UI 라벨 문자열은 가능한 한 **한 곳에 const로 모아** 참조한다(화면 코드에 한글 리터럴 직접 하드코딩 금지).
   - 예: `lib/constants/category_labels.dart`에 `const Map/...` 또는 `enum + label getter` 형태로 정의하고, 화면에서는 그 상수만 사용한다.
 - Windows 터미널 환경에서는 Codex CLI 작업 시작 전에 콘솔 인코딩을 UTF-8로 맞춘다.
